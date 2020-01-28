@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.bms.dao.OrderDao">
+    <sql id="selectAll">
+        a.order_id,a.user_id,a.user_name,a.address_id,b.addressInfo,b.infos,a.drink_name,a.price,a.state,a.create_time,a.is_deleted
+    </sql>
+    <select id="AdminSelectAll"  resultType="map">
+        select <include refid="selectAll"></include> from t_order a LEFT JOIN t_address b on a.address_id =b.address_id
+        <if test="user_name != null">
+            where a.user_name like concat('%',#{user_name},'%')
+        </if>
+    </select>
+
+    <update id="AdminChangeState" parameterType="Order">
+        update t_order set state=#{state} , version =version+1 where order_id =#{order_id}
+    </update>
+
+    <update id="AdminChangDeleted" parameterType="Order">
+        update t_order set is_deleted=#{is_deleted} , version =version+1 where order_id =#{order_id}
+    </update>
+
+    <update id="AdmindeleteAll" parameterType="map">
+        update t_order set is_deleted=1,version=version+1 where order_id in
+        <foreach item="item" collection="ids" index="index"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="ChangeStateAll" parameterType="map">
+        update t_order set state=1,version=version+1 where order_id in
+        <foreach item="item" collection="ids" index="index"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.bms.dao.DrinkDao">
+    <sql id="AdminSelectDrink">
+        a.drink_id,a.drink_name,a.drink_picture,a.price,a.`explain`,a.parent_id,a.create_timesd,a.is_deleted,b.score
+    </sql>
+    <select id="AdminSelectDrinkInfo"  resultType="Drink">
+        select <include refid="AdminSelectDrink"></include> from t_drink a LEFT JOIN t_comment b on a.drink_id = b.comment_id
+        <if test="drink_name != null">
+            where a.drink_name like concat('%',#{drink_name},'%')
+        </if>
+    </select>
+    <select id="AdminSelectInfoById" resultType="Drink">
+        select a.drink_id,a.drink_name,a.drink_picture,a.price,a.`explain`,a.parent_id,a.create_timesd,a.is_deleted,b.score from t_drink a LEFT JOIN t_comment b on a.drink_id = b.comment_id where a.drink_id =#{drinkId}
+    </select>
+    <update id="upload" parameterType="Drink">
+        update  t_drink set drink_picture =#{drinkPicture}  where drink_id =#{drinkId}
+    </update>
+
+    <insert id="AdminAddDrink" parameterType="Drink">
+        insert into t_drink (drink_name,price,`explain`,parent_id,create_timesd,version,is_deleted) values
+         (#{drinkName},#{price},#{explain},#{parentId},#{createTimesd},#{version},#{isDeleted})
+    </insert>
+
+    <update id="AdminDeleteDrink" parameterType="Drink">
+        update t_drink set is_deleted=#{isDeleted} , version =version+1 where drink_id =#{drinkId}
+    </update>
+
+    <update id="AdminDeletedAllDrink" parameterType="map">
+        update t_drink set is_deleted=1,version=version+1 where drink_id in
+        <foreach item="item" collection="ids" index="index"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <insert id="AdminAddScore" parameterType="comment">
+        insert into t_comment (create_time,score,version,is_deleted) values
+         (now(),#{score},#{version},#{isDeleted})
+    </insert>
+
+    <update id="ChangeScore" parameterType="map">
+        update t_comment set score=#{score} , version =version+1 where comment_id =#{commentId}
+    </update>
+
+    <update id="AdminUpdateDrink" parameterType="Drink">
+        update t_drink set drink_name = #{drinkName},price=#{price},`explain`=#{explain},parent_id=#{parentId},update_time=#{updateTime},version =version+1,is_deleted=#{isDeleted} where drink_id = #{drinkId}
+    </update>
+</mapper>
