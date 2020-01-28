@@ -82,8 +82,4 @@ npm run dev //会提示访问地址 如：http://localhost:8081
 
 或者选择右侧导航栏-->点击maven-->demo-->Plugins-->clean-->install
 
-点击 Edit Configurations --> +  --> 添加Tomcat Server local --->添加Tomcat服务器-->URL 为 http://localhost:8080/CAT/
-
-如果Tomcat配置有误，请自行百度，但启动url必须为8080/CAT/ 。当然如果要改url地址，就又得改前端的跨域问题，楼上有。
-
 # 更完整项目请参考笔者仓库下的CAT项目
